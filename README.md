@@ -2,7 +2,9 @@
 
 This is a first testing / working version!
 
-Adds an addressbook functionality to DokuWiki. The contacts are stored in a sqlite3-database. The [sqlite-plugin](https://www.dokuwiki.org/plugin:sqlite) ist required.
+Adds an addressbook functionality to DokuWiki. The search results are also displayed on the standards search page.
+
+The contacts are stored in a sqlite3-database. The [sqlite-plugin](https://www.dokuwiki.org/plugin:sqlite) ist required.
 
 ## Usage
 
@@ -52,11 +54,10 @@ Creates a printable list
 ## Issues / Ideas
 
 * Import and export CSV-Files
-* Integration into DokuWikis search
+* Integration into DokuWikis search should be configurable
 * Improve styling of the search box
-* Add print styles for contact cars and the index list
-
-* übersetzungen
+* Add print styles for contact cards and the index list
+* Improve index list showing specified amount of contacts with page flip
 
 
 ## Compatibility

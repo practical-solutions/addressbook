@@ -184,3 +184,9 @@ font: normal 16px/1.4 Arial,sans-serif;
     border:0px !important;
     font-size:10px;
 }
+
+.plugin_addressbook_searchpage {
+    padding:10px;
+    border:1px dotted gray;
+    margin-bottom:1em;
+}
