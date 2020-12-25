@@ -1,0 +1,186 @@
+.plugin_addressbook_singlecontact {
+    background-color:#efefef;
+    display:block;
+    max-width:600px;
+    min-width:350px;
+    vertical-align:top;
+    margin:6px;
+    display:inline-block;
+    border-radius:4px;
+    
+    
+    padding:8px 12px 12px;
+    font-size:15px;
+    box-shadow: 0 3px 5px rgba(0,0,0,.12),0 3px 5px rgba(0,0,0,.24);
+}
+
+.plugin_addressbook_singlecontact b{
+    font-size:115%;
+}
+
+.plugin_addressbook_singlecontact .footer{
+    color:gray;
+    padding:0 7px 0px  5px;
+    font-size:12px;
+    margin-top:2px;
+}
+
+.plugin_addressbook_singlecontact .footer .buttons{
+    float:right;
+}
+
+.plugin_addressbook_singlecontact .footer .buttons a {
+    padding-left:6px;
+}
+
+.plugin_addressbook_singlecontact .content{
+    width:100%;
+    display:block;
+    
+}
+
+.plugin_addressbook_singlecontact .data {
+    float:left;
+}
+
+.plugin_addressbook_singlecontact .photo{
+    
+    float:right;
+    padding:3px;
+    max-width:150px;
+}
+
+.plugin_addressbook_singlecontact .content:after{
+    content:"";
+    display:table;
+    clear:both;
+}
+
+.plugin_addressbook_editform{
+    padding:1em;
+    border:1px dotted gray;
+    }
+
+.plugin_addressbook_editform h2 {
+    margin-bottom:0;
+    padding-bottom:0;
+}
+
+.plugin_addressbook_editform input[type=text],
+.plugin_addressbook_searchbox input[type=text]{
+    all:initial;
+    font: normal 87.5%/1.4 Arial,sans-serif;
+    background:linen;
+    color:gray;
+    border: 2px solid #ccc;
+    font-size:16px;
+    padding:3px;
+    margin:3px;
+    width:40%;
+    max-width:300px;
+}
+
+
+.plugin_addressbook_editform input[type=text]:focus{
+    background-color: lightblue;
+}
+
+.plugin_addressbook_editform textarea{
+    all:initial;
+    font: normal 87.5%/1.4 Arial,sans-serif;
+  height: 150px;
+  width:100%;
+  max-width:500px;
+  padding: 12px 10px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  resize: none;
+}
+
+.plugin_addressbook_editform .photoupload{
+    padding:5px;
+}
+
+.plugin_addressbook_editform .photoupload img{
+    padding-right:10px;
+}
+
+.plugin_addressbook_editform .photoupload:after{
+    content:"";
+    display:table;
+    clear:both;
+}
+
+.plugin_addressbook_editform input[type=submit],
+.plugin_addressbook_searchbox input[type=submit] {
+all:initial;
+font: normal 16px/1.4 Arial,sans-serif;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 5px 20px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.plugin_addressbook_editform input[type=submit]:hover,
+.plugin_addressbook_searchbox input[type=submit]:hover {
+    background-color:steelblue;
+}
+
+.plugin_addressbook_editform .id{
+    float:right;
+    color:gray;
+    font-size:85%;
+}
+
+.plugin_addressbook_searchbox {
+    border:1px dotted gray;
+    padding:15px;
+    margin-bottom:1em;
+}
+
+.plugin_addressbook_searchbox span {
+    font-weight:bold;
+    font-size:18px;
+}
+
+.addressbook_list span{
+    margin-bottom:8px;
+    display:inline-block;
+    color:gray;
+    border-left:4px solid lightgray;
+    padding:2px 0 2px 4px;
+    background:#f2f2e2;
+    
+    width:95%;
+}
+
+.addressbook_list h3{
+    margin-top:2em;
+}
+
+
+.plugin_addressbook_print {
+    width:100% !important;
+    max-width:800px;
+}
+
+.plugin_addressbook_print tbody td {
+    border:1px solid white;
+    padding:0;
+    text-align:center;
+    min-width:20px;
+}
+
+
+.plugin_addressbook_print tr,
+.plugin_addressbook_print tbody,
+.plugin_addressbook_print
+ {
+    border:0px !important;
+    font-size:10px;
+}

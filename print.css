@@ -1,0 +1,19 @@
+.addressbook_list,
+.singlecontact,
+.searchbox,
+.plugin_addressbook_editform {
+    display:none;
+}
+
+
+/* Printlist */
+
+.plugin_addressbook_print {
+    width:100%;
+    page-break-after: always;
+}
+
+.plugin_addressbook_print td {
+    font-size:10px;
+    text-align:center;
+}
