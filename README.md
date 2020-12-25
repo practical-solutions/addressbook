@@ -58,6 +58,7 @@ Creates a printable list
 * Improve styling of the search box
 * Add print styles for contact cards and the index list
 * Improve index list showing specified amount of contacts with page flip
+* Upload/Download sqlite3-file in admin section
 
 
 ## Compatibility

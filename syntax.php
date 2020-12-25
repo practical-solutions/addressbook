@@ -335,7 +335,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         
         if ($r['description']<>'') $out .= $r['description'];
         
-        if ($this->loggedin) {
+        if (!$_REQUEST['do'] == 'search' && $this->loggedin) {
             $out .= '<div class="footer">';
         
             $out .= 'Nr. '.$r['id'];
