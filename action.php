@@ -42,8 +42,8 @@ class action_plugin_addressbook extends DokuWiki_Action_Plugin {
         
         
         if (count($list)<5) {
-            foreach ($list as $l) $res .= $syntax->showcontact($l['id']);
-        } else $res .= $syntax->buildIndex($list,false,($this->getConf('search link target') != ''? $this->getConf('search link target'):''));
+            foreach ($list as $l) $res .= $syntax->showcontact($l['id'],($this->getConf('search link target') != ''? $this->getConf('search link target'):false));
+        } else $res .= $syntax->buildIndex($list,false,($this->getConf('search link target') != ''? $this->getConf('search link target'):false));
         
         
         

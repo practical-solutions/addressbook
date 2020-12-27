@@ -1,7 +1,5 @@
 ﻿# Addressbook Plugin for DokuWiki
 
-This is a first testing / working version!
-
 Adds an addressbook functionality to DokuWiki. The search results are also displayed on the standards search page.
 
 The contacts are stored in a sqlite3-database. The [sqlite-plugin](https://www.dokuwiki.org/plugin:sqlite) ist required.
@@ -59,8 +57,6 @@ Contact search results are display on the search results page. In order to activ
 
 ## Issues / Ideas
 
-* Links from search page must be targeted, then also activate links again
-
 * Import and export CSV-Files
 * Integration into DokuWikis search should be configurable
 * Improve styling of the search box
@@ -79,4 +75,4 @@ Tested with
 
 ## Data storage
 
-The data is stored ``data/meta/addressbook.sqlite3`` and can be backuped easily. An addressbook (sqlite3) with 1.000 contacts has a size of approximately 4.1 MB if every contact has a photo. The photo is scaled down and compressed, so it uses about 3-4kB. It is stored within the database as a blob (base64encoded).
+The complete data (including the images as blobs) is stored ``data/meta/addressbook.sqlite3`` and can be backuped easily. An addressbook (sqlite3) with 1.000 contacts has a size of approximately 4.1 MB if every contact has a photo. The photo is scaled down and compressed, so it uses about 3-4kB. It is stored within the database as a blob (base64encoded).
