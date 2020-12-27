@@ -116,16 +116,17 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                 !isset($_REQUEST['editcontact']) &&
                 $action != 'edit'
                 ) {
-                $renderer->doc .= $this->showcontact(intval(substr($data,8)));
+                $renderer->doc .= $this->showcontact(intval(substr($data,8)),$ID);
                 return; #no following actions
             }
             
           
-            if (substr($data,0,5) == 'index') {
+            if (substr($data,0,5) == 'index' &&
+                !isset($_REQUEST['editcontact'])) {
                 # showcontact once before if necessary
                 if (isset($_REQUEST['showcontact']) && $this->showCount==0) {
                     $this->showCount++;
-                    $out = $this->showcontact($_REQUEST['showcontact']);
+                    $out = $this->showcontact($_REQUEST['showcontact'],$ID);
                     if ($out !== false) $renderer->doc .= $out.'<br>';
                 }
                 # now show index
@@ -133,8 +134,9 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                 # keyword 'departments'
                 if (strpos($data,'departments') > 0) {
                     $list = $this->getList(false,'department,surname,firstname,cfunction');
-                    $renderer->doc .= $this->buildIndex($list,'department');
-                } else $renderer->doc .= $this->buildIndex();
+                    $renderer->doc .= $this->buildIndex($list,'department',$ID);
+                } else $renderer->doc .= $this->buildIndex(false,false,$ID);
+                
                 return; # no following actions
             }
 
@@ -201,8 +203,8 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                 $list = $this->searchDB($_REQUEST['searchtext']);
                 if ($list != false){
                     if (count($list)<5) {
-                        foreach ($list as $l) $renderer->doc .= $this->showcontact($l['id']);
-                    } else $renderer->doc .= $this->buildIndex($list);
+                        foreach ($list as $l) $renderer->doc .= $this->showcontact($l['id'],$ID);
+                    } else $renderer->doc .= $this->buildIndex($list,false,$ID);
                 }
             }
 
@@ -214,7 +216,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
              */            
             if (isset($_REQUEST['showcontact']) && $this->showCount==0) {
                 $this->showCount++;
-                $out = $this->showcontact($_REQUEST['showcontact']);
+                $out = $this->showcontact($_REQUEST['showcontact'],$ID);
                 if ($out !== false) $renderer->doc .= $out.'<br>';
             }
             
@@ -290,8 +292,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         return $out;
     }
     
-    function showcontact($cid){
-        global $ID;
+    function showcontact($cid,$target = false){
         
         $r = $this->getContactData($cid);
 
@@ -300,7 +301,6 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         $out ='';
         
         $out .= '<div class="plugin_addressbook_singlecontact">';
-        #$out .= '<div class="header">Contact Card</div>';
         
         $out .= '<div class="content">';
         
@@ -335,15 +335,15 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         
         if ($r['description']<>'') $out .= $r['description'];
         
-        if (!$_REQUEST['do'] == 'search' && $this->loggedin) {
+        if ($this->loggedin) {
             $out .= '<div class="footer">';
         
             $out .= 'Nr. '.$r['id'];
         
-            if ($this->editor) {
+            if ($this->editor && $target != false) {
                 $out .= '<span class="buttons">';
-                $out .= '<a href="'.wl($ID,'editcontact='.$r['id']).'">'.$this->getLang('exec edit').'</a>';
-                $out .= '<a href="'.wl($ID,'erasecontact='.$r['id']).'" onclick="return confirm(\'Sure?\');">'.$this->getLang('exec delete').'</a>';
+                $out .= '<a href="'.wl($target,'editcontact='.$r['id']).'">'.$this->getLang('exec edit').'</a>';
+                $out .= '<a href="'.wl($target,'erasecontact='.$r['id']).'" onclick="return confirm(\'Sure?\');">'.$this->getLang('exec delete').'</a>';
                 $out .= '</span>';
             }
         
@@ -731,8 +731,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
      *  @param $list: list of contacts
      *  @param $separator = db_field for which headers are created in the list.
      */
-    function buildIndex($list=false,$separator=false){
-        global $ID;
+    function buildIndex($list=false,$separator=false,$target=false){
         
         # if no list ist stated, get all. If no entry in DB, return
         if ($list===false){
@@ -761,12 +760,12 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
             
             if ($r['surname'].$r['firstname'] <> '') {$names = true;} else {$names = false;}
             
-            $out .= '<a href="'.wl($ID,'showcontact='.$r['id']).'">';
+            if ($target != false) $out .= '<a href="'.wl($target,'showcontact='.$r['id']).'">';
             
             $out .= $r['surname'] .($r['firstname'] <> ''? ', '.$r['firstname']:'');
             if (!$names) $out .= $this->names(array($r['cfunction'],$r['department']));
             
-            $out .= '</a>';
+            if ($target != false) $out .= '</a>';
             
             if ($names && $r['cfunction'].$r['department'] <>'') $out .= ' ('.$this->names(array($r['cfunction'],$r['department'])).')';
             

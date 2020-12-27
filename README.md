@@ -50,8 +50,16 @@ Creates a printable list
   * ``[ADDRESSBOOK:print?select=<name>]`` - Show only contacts from department ``<name>``
 
 
+## Settings
+
+### Option 'search link target'
+
+Contact search results are display on the search results page. In order to activate links to show or edit a contact, a page id must be stated, to which the link directs. This target page must contatin an ``[ADDRESSBOOK:]``-Tag for the request to performed.
+
 
 ## Issues / Ideas
+
+* Links from search page must be targeted, then also activate links again
 
 * Import and export CSV-Files
 * Integration into DokuWikis search should be configurable

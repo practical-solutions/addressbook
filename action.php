@@ -40,11 +40,12 @@ class action_plugin_addressbook extends DokuWiki_Action_Plugin {
         
         $syntax = plugin_load('syntax', 'addressbook');
         
-        if ($list != false){
-            if (count($list)<5) {
-                foreach ($list as $l) $res .= $syntax->showcontact($l['id']);
-            } else $res .= $syntax->buildIndex($list);
-        }
+        
+        if (count($list)<5) {
+            foreach ($list as $l) $res .= $syntax->showcontact($l['id']);
+        } else $res .= $syntax->buildIndex($list,false,($this->getConf('search link target') != ''? $this->getConf('search link target'):''));
+        
+        
         
         foreach ($found as $f) $res .= $syntax->showcontact($f['id']);
         
