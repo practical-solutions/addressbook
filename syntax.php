@@ -234,6 +234,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
     
     
     function searchDialog(){
+        global $ID;
         $out = '';
         
         $out .= '<div class="plugin_addressbook_searchbox">';
@@ -794,7 +795,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
      * @param integer $entriesperpage = amount of list items per page, must be even!
      * @param
      */
-    function buildPrintList($list=false,$separator = false,$entriesperpage = 50){
+    function buildPrintList($list=false,$separator = false,$entriesperpage = 80){
         
         # validation: separator type correct
         $allowed_separators = Array('department');

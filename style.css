@@ -66,8 +66,7 @@
     padding-bottom:0;
 }
 
-.plugin_addressbook_editform input[type=text],
-.plugin_addressbook_searchbox input[type=text]{
+.plugin_addressbook_editform input[type=text]{
     all:initial;
     font: normal 87.5%/1.4 Arial,sans-serif;
     background:linen;
@@ -80,6 +79,22 @@
     max-width:300px;
 }
 
+.plugin_addressbook_searchbox input[type=text]{
+    all:initial;
+    font: normal 87.5%/1.4 Arial,sans-serif;
+    color:gray;
+    border:1px solid gray;
+    font-size:16px;
+    padding:3px 6px;
+    margin:3px 6px;
+    width:40%;
+    max-width:300px;
+}
+
+.plugin_addressbook_searchbox input[type=text]:focus{
+    background-color:linen;
+    color:black;
+}
 
 .plugin_addressbook_editform input[type=text]:focus{
     background-color: lightblue;
@@ -88,15 +103,15 @@
 .plugin_addressbook_editform textarea{
     all:initial;
     font: normal 87.5%/1.4 Arial,sans-serif;
-  height: 150px;
-  width:100%;
-  max-width:500px;
-  padding: 12px 10px;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  background-color: #f8f8f8;
-  resize: none;
+    height: 150px;
+    width:100%;
+    max-width:500px;
+    padding: 12px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
 }
 
 .plugin_addressbook_editform .photoupload{
@@ -114,21 +129,18 @@
 }
 
 .plugin_addressbook_editform input[type=submit],
-.plugin_addressbook_searchbox input[type=submit] {
-all:initial;
-font: normal 16px/1.4 Arial,sans-serif;
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 5px 20px;
-  text-decoration: none;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-
 .plugin_addressbook_editform input[type=submit]:hover,
+.plugin_addressbook_searchbox input[type=submit],
 .plugin_addressbook_searchbox input[type=submit]:hover {
-    background-color:steelblue;
+    all:initial;
+    font: normal 16px/1.4 Arial,sans-serif;
+    background-color: lightsteelblue; /*#4CAF50;*/
+    border: none;
+    color: white;
+    padding: 5px 20px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
 }
 
 .plugin_addressbook_editform .id{
@@ -138,7 +150,8 @@ font: normal 16px/1.4 Arial,sans-serif;
 }
 
 .plugin_addressbook_searchbox {
-    border:1px dotted gray;
+    /*display:inline-block;*/
+    /*border:1px dotted gray;*/
     padding:15px;
     margin-bottom:1em;
 }
