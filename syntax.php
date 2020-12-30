@@ -74,7 +74,8 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         if($mode == 'xhtml') {
             $renderer->info['cache'] = false;
             
-
+            # addressbook_debug_show();
+            
             if ($_REQUEST['Submit'] == $this->getLang('exec cancel')){
                 unset($_REQUEST);
                 unset ($cinfo);
@@ -193,13 +194,13 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
             
             
             # Show search box
-            if ($action == 'search' || $_REQUEST['Submit'] == 'Search') {
+            if ($action == 'search' || $_REQUEST['Submit'] == $this->getLang('exec search')) {
                 $out = $this->searchDialog();
                 $renderer->doc .= $out;
             }
             
             
-            if ($_REQUEST['Submit'] == 'Search') {
+            if ($_REQUEST['Submit'] == $this->getLang('exec search')) {
                 $list = $this->searchDB($_REQUEST['searchtext']);
                 if ($list != false){
                     if (count($list)<5) {
@@ -963,4 +964,11 @@ function contact_custom_double_sort($a,$b) {
     if ($a['surname'] == '') $a['surname'] = $a['cfunction'];
     if ($b['surname'] == '') $b['surname'] = $b['cfunction'];
     return $a['surname'] > $b['surname'];
+}
+
+
+function addressbook_debug_show($direct=true){
+    $out = '<pre>'.print_r($_REQUEST,true).'</pre>';
+    if ($direct) echo $out;
+    return $out;
 }
