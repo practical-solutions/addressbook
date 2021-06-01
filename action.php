@@ -36,7 +36,7 @@ class action_plugin_addressbook extends DokuWiki_Action_Plugin {
   
   
         $res .= '<div class="plugin_addressbook_searchpage">';
-        $res .= '<h2>Results in Addressbook</h2>';
+        $res .= '<h2>'.$this->getLang('results msg').':</h2>';
         
         $syntax = plugin_load('syntax', 'addressbook');
         

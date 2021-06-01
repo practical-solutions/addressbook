@@ -9,6 +9,7 @@ $lang['exec search']        = 'Suchen';
 
 $lang['header edit']        = 'Kontakt bearbeiten';
 $lang['header add']         = 'Neuen Kontakt hinzufügen';
+$lang['results msg']        = 'Ergebnisse im Adressbuch';
 
 
 $lang['form firstname']     = 'Vorname';

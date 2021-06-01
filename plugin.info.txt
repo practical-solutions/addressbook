@@ -1,7 +1,7 @@
 ﻿base   addressbook
 author Gero Gothe
 email  gero.gothe@medizindoku.de
-date   2020-12-27
+date   2021-06-01
 name   Address Book Plugin
 desc   Simple addressbook using the sqlite-plugin
 url    https://www.dokuwiki.org/plugin:addressbook
