@@ -8,6 +8,8 @@
  * 
  */
  
+ // TS: 2022-04-04 - eigene Anpassung, um die Felder cfunction und tel2 als Straße und PLZ+Ort zu missbrauchen
+ 
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
@@ -366,14 +368,16 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         # Function/department if existant
         if ($r['surname'].$r['firstname'] == '') $out .= '<b>';
                 
-        if ($r['department'].$r['cfunction'] != '') $out .= $this->names(array($r['cfunction'],$r['department']));
+        if ($r['department'] != '') $out .= $this->names(array($r['department']));
         
-        if (strlen($r['cfuntion'] .$r['department'])>0) $out .= '<br>';
+        if (strlen($r['department'])>0) $out .= '<br>';
         if ($r['surname'].$r['firstname'] == '') $out .= '</b>';
             
         # Telephone
-        if ($r['tel1'].$r['tel2'] <> '') $out .= '<br>Tel.: '.$this->names(array($r['tel1'],$r['tel2']),' / ');
+        if ($r['tel1'] <> '') $out .= '<br>Tel.: '.$this->names(array($r['tel1']));
         
+        # TS: Adresse
+        if ($r['tel2'].$r['cfunction']<>'') $out .= '<br>'.$this->names(array($r['tel2'],$r['cfunction']));
         # Fax
         if ($r['fax']<>'') $out .= '<br>Fax: '.$r['fax'];
         
@@ -447,7 +451,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
      * ! result does not contain the photo and the id
      */
     function getKeys(){
-        return Array('firstname','surname','cfunction','department','tel1','tel2','fax','email','description');
+        return Array('firstname','surname','department','cfunction','tel1','tel2','fax','email','description');
     }
     
     
@@ -820,9 +824,11 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
             
             if ($target != false) $out .= '</a>';
             
-            if ($names && $r['cfunction'].$r['department'] <>'') $out .= ' ('.$this->names(array($r['cfunction'],$r['department'])).')';
+            if ($names && $r['department'] <>'') $out .= ' ('.$this->names(array($r['department'])).')';
             
-            if ($r['tel1'].$r['tel2'] <> '') $out .= ' Tel: '.$this->names(array($r['tel1'],$r['tel2']));
+            if ($r['tel1'].$r['tel2'] <> '') $out .= ' Tel: '.$this->names(array($r['tel1']));
+			
+			if ($r['tel2'].$r['cfunction'] <> '') $out .= ', '.$this->names(array($r['tel2'],$r['cfunction']));
             
             $out .= '</span>';
         }
@@ -856,6 +862,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
             
             $out .= '<table class="plugin_addressbook_print">';
         
+			$out .= '<tr><th>Praxis</th><th>Telefon</th><th>Fax</th><th>Adresse</th></tr>';
             for ($row=0;$row<$entriesperpage/2;$row++) {
                 
                 unset($i);
@@ -877,21 +884,21 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                     # Output contact data
                     if ($d < $amount && !isset($list[$d]['title'])) {
 
-                        $out .= '<td style="text-align:left">'.$this->names(array($list[$d]['cfunction'],$list[$d]['surname']),' ').'</td>';
+                        $out .= '<td style="text-align:left">'.$this->names(array($list[$d]['surname'],$list[$d]['firstname'])).'</td>';
                         $out .= '<td>'.$list[$d]['tel1'].'</td>';
-                        $out .= '<td>'.$list[$d]['tel2'].'</td>';
                         $out .= '<td>'.$list[$d]['fax'].'</td>';
+                        $out .= '<td style="text-align:left">'.$list[$d]['tel2'].', '.$list[$d]['cfunction'].'</td>';
 
                         $col++;
                         if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
                     }
                     
                     # Fill with empty cells if there are no entries, so that the table is continued
-                    if ($d> $amount) {
+                    /*if ($d> $amount) {
                         $out.= '<td colspan=4 style="background:white;">'.str_repeat('&nbsp;',15).'</td>';
                         $col++;
                         if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
-                    }
+                    }*/
                     
                 }
 
