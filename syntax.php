@@ -68,169 +68,220 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
      * @param   $data     array         data created by handler()
      * @return  boolean                 rendered correctly?
      */
-    public function render($mode, Doku_Renderer $renderer, $data) {
-        global $ID;
-        
-        if($mode == 'xhtml') {
-            $renderer->info['cache'] = false;
-            
-            # addressbook_debug_show();
-            
-            if ($_REQUEST['Submit'] == $this->getLang('exec cancel')){
-                unset($_REQUEST);
-                unset ($cinfo);
-                $action = $data;
-            }
-            
-            # Main action given by tag data
-            if (!isset($_REQUEST['Submit'])) $action = $data;
-
-
-            /* Save a contact
-             * 
-             * On fail: show edit form again
-             */
-            if ($_REQUEST['Submit']==$this->getLang('exec save')) $action = "savedata";
-            
-            # Certain actions could cause double saving, which is avoided by counting
-            if ($action=='savedata' && $this->saveOnce == 0 && $this->editor){
-                $this->saveOnce++;
-                $contact_id = $_REQUEST['editcontact'];
-                $cinfo = $this->loadFormData(); # Loads form data concerning the contact
-                $res = $this->saveData($cinfo);
-                if (!$res) {
-                    $action = 'edit';
-                    $contact_id = $_REQUEST['contactid'];
-                } else { # Clear all
-                    unset($_REQUEST);
-                    unset ($cinfo);
-                    $action = $data;
-                }
-            }
-
-
-            /* Directly show contact card by tag
-             * 
-             * Cards are only display, when there is NO edit or save action
-             */
-            if (substr($data,0,7) == 'contact' && 
-                !isset($_REQUEST['editcontact']) &&
-                $action != 'edit'
-                ) {
-                $renderer->doc .= $this->showcontact(intval(substr($data,8)),$ID);
-                return; #no following actions
-            }
-            
-          
-            if (substr($data,0,5) == 'index' &&
-                !isset($_REQUEST['editcontact'])) {
-                # showcontact once before if necessary
-                if (isset($_REQUEST['showcontact']) && $this->showCount==0) {
-                    $this->showCount++;
-                    $out = $this->showcontact($_REQUEST['showcontact'],$ID);
-                    if ($out !== false) $renderer->doc .= $out.'<br>';
-                }
-                # now show index
-                
-                # keyword 'departments'
-                if (strpos($data,'departments') > 0) {
-                    $list = $this->getList(false,'department,surname,firstname,cfunction');
-                    $renderer->doc .= $this->buildIndex($list,'department',$ID);
-                } else $renderer->doc .= $this->buildIndex(false,false,$ID);
-                
-                return; # no following actions
-            }
-
-
-            # --------------------------------------------------------#
-            # only one instance beyond this point
-            $this->instance++;
-            if ($this->instance > 1) return;
-            # --------------------------------------------------------#
-
-            
-            # Generate printable list
-            if (substr($data,0,5) == 'print') {
-                
-                $pList = false;
-                $sep = false;
-                
-                $params = $this->getValue($data,'');
-                
-                if (isset($params['department'])) $sep = 'department';
-                
-                # Select one department
-                if (isset($params['select'])) {
-                    $pList = $this->getList(Array('department' => $params['select']));
-                    $sep = false;
-                }
-                 
-                $renderer->doc .= $this->buildPrintList($pList,$sep);
-                
-                return;
-            }
-
-
-            /* Edit contact or add a new contact
-             * 
-             * No futher actions are performed after an edit
-             */
-            if ($action == 'addcontact' && $this->editor) { # Add a new contact. Can be overwritten by edit
-                $contact_id = 'new';
-                $action = 'edit'; # redefine action
-            }
-            
-            if (isset($_REQUEST['editcontact'])  && $this->editor) { # Override new contact if the action is to edit an existing one
-                $contact_id = $_REQUEST['editcontact'];
-                $cinfo = $this->getContactData($contact_id);
-                $action = 'edit';
-            }
-            
-            if ($action == 'edit'  && $this->editor) {
-                $out = $this->buildForm($contact_id,$cinfo);
-                $renderer->doc .= $out;
-                return; # no following actions
-            }
-            
-            
-            # Show search box
-            if ($action == 'search' || $_REQUEST['Submit'] == $this->getLang('exec search')) {
-                $out = $this->searchDialog();
-                $renderer->doc .= $out;
-            }
-            
-            
-            if ($_REQUEST['Submit'] == $this->getLang('exec search')) {
-                $list = $this->searchDB($_REQUEST['searchtext']);
-                if ($list != false){
-                    if (count($list)<5) {
-                        foreach ($list as $l) $renderer->doc .= $this->showcontact($l['id'],$ID);
-                    } else $renderer->doc .= $this->buildIndex($list,false,$ID);
-                }
-            }
-
-            
-            /* Show contact per request
-             * can only be shown once due to the instance count above
-             * 
-             * placed below the searchbox
-             */            
-            if (isset($_REQUEST['showcontact']) && $this->showCount==0) {
-                $this->showCount++;
-                $out = $this->showcontact($_REQUEST['showcontact'],$ID);
-                if ($out !== false) $renderer->doc .= $out.'<br>';
-            }
-            
-            
-            # Delete a contact
-            if (isset($_REQUEST['erasecontact'])  && $this->editor){
-                $this->deleteContact($_REQUEST['erasecontact']);
-            }
-
-            return true;
+	public function render($mode, Doku_Renderer $renderer, $data) {
+        switch ($mode) {
+            case "xhtml":
+                /* @var Doku_Renderer_xhtml $renderer */
+                // Calling the XHTML render function.
+                return $this->render_for_xhtml($renderer, $data);
+            case "odt":
+                /* @var renderer_plugin_odt_page $renderer */
+                // Calling the ODT render function.
+                return $this->render_for_odt($renderer, $data);
         }
-
+ 
+        // Success. We did support the format.
         return false;
+    }
+ 
+    /**
+     * @param   $renderer Doku_Renderer the current renderer object
+     * @param   $data     array         data created by handler()
+     * @return  boolean                 rendered correctly?
+     */
+    protected function render_for_xhtml (&$renderer, $data) {
+        // Generate XHTML content...
+        global $ID;
+        $renderer->info['cache'] = false;
+				
+		# addressbook_debug_show();
+		
+		if ($_REQUEST['Submit'] == $this->getLang('exec cancel')){
+			unset($_REQUEST);
+			unset ($cinfo);
+			$action = $data;
+		}
+		
+		# Main action given by tag data
+		if (!isset($_REQUEST['Submit'])) $action = $data;
+
+
+		/* Save a contact
+		 * 
+		 * On fail: show edit form again
+		 */
+		if ($_REQUEST['Submit']==$this->getLang('exec save')) $action = "savedata";
+		
+		# Certain actions could cause double saving, which is avoided by counting
+		if ($action=='savedata' && $this->saveOnce == 0 && $this->editor){
+			$this->saveOnce++;
+			$contact_id = $_REQUEST['editcontact'];
+			$cinfo = $this->loadFormData(); # Loads form data concerning the contact
+			$res = $this->saveData($cinfo);
+			if (!$res) {
+				$action = 'edit';
+				$contact_id = $_REQUEST['contactid'];
+			} else { # Clear all
+				unset($_REQUEST);
+				unset ($cinfo);
+				$action = $data;
+			}
+		}
+
+
+		/* Directly show contact card by tag
+		 * 
+		 * Cards are only display, when there is NO edit or save action
+		 */
+		if (substr($data,0,7) == 'contact' && 
+			!isset($_REQUEST['editcontact']) &&
+			$action != 'edit'
+			) {
+			$renderer->doc .= $this->showcontact(intval(substr($data,8)),$ID);
+			return; #no following actions
+		}
+		
+	  
+		if (substr($data,0,5) == 'index' &&
+			!isset($_REQUEST['editcontact'])) {
+			# showcontact once before if necessary
+			if (isset($_REQUEST['showcontact']) && $this->showCount==0) {
+				$this->showCount++;
+				$out = $this->showcontact($_REQUEST['showcontact'],$ID);
+				if ($out !== false) $renderer->doc .= $out.'<br>';
+			}
+			# now show index
+			
+			# keyword 'departments'
+			if (strpos($data,'departments') > 0) {
+				$list = $this->getList(false,'department,surname,firstname,cfunction');
+				$renderer->doc .= $this->buildIndex($list,'department',$ID);
+			} else $renderer->doc .= $this->buildIndex(false,false,$ID);
+			
+			return true; # no following actions
+		}
+
+
+		# --------------------------------------------------------#
+		# only one instance beyond this point
+		$this->instance++;
+		if ($this->instance > 1) return;
+		# --------------------------------------------------------#
+
+		
+		# Generate printable list
+		if (substr($data,0,5) == 'print') {
+			$pList = false;
+			$sep = false;
+			
+			$params = $this->getValue($data,'');
+			
+			if (isset($params['department'])) $sep = 'department';
+			
+			# Select one department
+			if (isset($params['select'])) {
+				$pList = $this->getList(Array('department' => $params['select']));
+				$sep = false;
+			}
+			 
+			$renderer->doc .= $this->buildPrintList($pList,$sep);
+			
+			return true;
+		}
+
+		/* Edit contact or add a new contact
+		 * 
+		 * No futher actions are performed after an edit
+		 */
+		if ($action == 'addcontact' && $this->editor) { # Add a new contact. Can be overwritten by edit
+			$contact_id = 'new';
+			$action = 'edit'; # redefine action
+		}
+		
+		if (isset($_REQUEST['editcontact'])  && $this->editor) { # Override new contact if the action is to edit an existing one
+			$contact_id = $_REQUEST['editcontact'];
+			$cinfo = $this->getContactData($contact_id);
+			$action = 'edit';
+		}
+		
+		if ($action == 'edit'  && $this->editor) {
+			$out = $this->buildForm($contact_id,$cinfo);
+			$renderer->doc .= $out;
+			return; # no following actions
+		}
+		
+		
+		# Show search box
+		if ($action == 'search' || $_REQUEST['Submit'] == $this->getLang('exec search')) {
+			$out = $this->searchDialog();
+			$renderer->doc .= $out;
+		}
+		
+		
+		if ($_REQUEST['Submit'] == $this->getLang('exec search')) {
+			$list = $this->searchDB($_REQUEST['searchtext']);
+			if ($list != false){
+				if (count($list)<5) {
+					foreach ($list as $l) $renderer->doc .= $this->showcontact($l['id'],$ID);
+				} else $renderer->doc .= $this->buildIndex($list,false,$ID);
+			}
+		}
+
+		
+		/* Show contact per request
+		 * can only be shown once due to the instance count above
+		 * 
+		 * placed below the searchbox
+		 */            
+		if (isset($_REQUEST['showcontact']) && $this->showCount==0) {
+			$this->showCount++;
+			$out = $this->showcontact($_REQUEST['showcontact'],$ID);
+			if ($out !== false) $renderer->doc .= $out.'<br>';
+		}
+		
+		
+		# Delete a contact
+		if (isset($_REQUEST['erasecontact'])  && $this->editor){
+			$this->deleteContact($_REQUEST['erasecontact']);
+		}
+
+		return true;
+    }
+ 
+    /**
+     * @param   $renderer Doku_Renderer the current renderer object
+     * @param   $data     array         data created by handler()
+     * @return  boolean                 rendered correctly?
+     */
+    protected function render_for_odt (&$renderer, $data) {
+        global $ID;
+
+        // Return if installed ODT plugin version is too old.
+        if ( method_exists($renderer, 'getODTProperties') == false
+            || method_exists($renderer, '_odtTableAddColumnUseProperties') == false
+        ) {
+            return false;
+        }
+		
+		# Generate printable list
+		if (substr($data,0,5) == 'print') {
+			$pList = false;
+			$sep = false;
+			
+			$params = $this->getValue($data,'');
+			
+			if (isset($params['department'])) $sep = 'department';
+			
+			# Select one department
+			if (isset($params['select'])) {
+				$pList = $this->getList(Array('department' => $params['select']));
+				$sep = false;
+			}
+			 
+			return $this->buildPrintList4ODT($renderer,$pList,$sep);
+		}
+		
+		return false;
     }
     
     
@@ -794,18 +845,82 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
      *                            Allowed separators: 'department'
      * 
      * @param integer $entriesperpage = amount of list items per page, must be even!
-     * @param
      */
     function buildPrintList($list=false,$separator = false,$entriesperpage = 80){
         
-        # validation: separator type correct
+		$pages = 0;
+		$amount = 0;
+		$this->preparePrintList($list,$separator,$entriesperpage,$pages,$amount);
+		
+        for ($p=0;$p<$pages;$p++) {
+            
+            $out .= '<table class="plugin_addressbook_print">';
+        
+            for ($row=0;$row<$entriesperpage/2;$row++) {
+                
+                unset($i);
+                $i[] = ($p * $entriesperpage) + $row;
+                $i[] = ($p * $entriesperpage) + $row + ($entriesperpage/2);
+                $col = 0;
+                
+                #if ($i[0] < $amount) 
+                $out .= '<tr'.($row % 2 == 1? ' style="background:lightgray"':'').'>';
+                
+                foreach ($i as $d) {
+                    # Output title
+                    if ($separator != false && $list[$d]['title'] == true) {
+                        $out .= '<td style="font-weight:bold;text-decoration:underline;font-size:12px;text-align:left;background:white" colspan=4>'.$list[$d]['cfunction'].'</td>';
+                        $col++;
+                        if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
+                        } 
+                    
+                    # Output contact data
+                    if ($d < $amount && !isset($list[$d]['title'])) {
+
+                        $out .= '<td style="text-align:left">'.$this->names(array($list[$d]['cfunction'],$list[$d]['surname']),' ').'</td>';
+                        $out .= '<td>'.$list[$d]['tel1'].'</td>';
+                        $out .= '<td>'.$list[$d]['tel2'].'</td>';
+                        $out .= '<td>'.$list[$d]['fax'].'</td>';
+
+                        $col++;
+                        if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
+                    }
+                    
+                    # Fill with empty cells if there are no entries, so that the table is continued
+                    if ($d> $amount) {
+                        $out.= '<td colspan=4 style="background:white;">'.str_repeat('&nbsp;',15).'</td>';
+                        $col++;
+                        if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
+                    }
+                    
+                }
+
+                $out .= '</tr>';
+            
+            }
+            
+            $out .= '</table>';
+        
+        }
+
+        return $out;
+
+    }
+
+
+    /* Helper function that prepares variables for a printable contact list.
+	 * Uses call by reference for all variables so that they can be used in the calling method.
+     */
+	
+	function preparePrintList(&$list,&$separator,&$entriesperpage,&$pages,&$amount){
+		# validation: separator type correct
         $allowed_separators = Array('department');
         if (!in_array($separator,$allowed_separators)) $separator = false;
         
         # validation entries per page must be even
         if ($entriesperpage % 2 == 1) $entriesperpage++;
         
-        # if no list ist stated, get all. If no entry in DB, return
+        # if no list is stated, get all. If no entry in DB, return
         if ($list===false){
             $list =$this->getList(false,($separator == false? '': "$separator,").'surname,firstname,cfunction');
             if ($list === false) return;
@@ -862,65 +977,99 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
             
             $amount = count($list);
             $pages = ceil($amount/$entriesperpage);
-            
         }
-        
-        
+	}
+ 
+ 
+    /* Builds a printable contact list as ODT output
+     * 
+     * @param   $renderer Doku_Renderer the current renderer object
+	 *
+     * @param array $list = list of contact entries in format array[1..n](db_field => value)
+     * 
+     * @param string $separator = name of database field. This name is added as a
+     *                            header between the contact entries. Important: The
+     *                            entries should be sorted in first place according
+     *                            to this speparator, otherweise there will be as many
+     *                            headers as contacts!.
+     *                            Allowed separators: 'department'
+     * 
+     * @param integer $entriesperpage = amount of list items per page, must be even!
+     */
+    function buildPrintList4ODT(&$renderer, $list=false,$separator = false,$entriesperpage = 80){
+		
+		$pages = 0;
+		$amount = 0;
+		$this->preparePrintList($list,$separator,$entriesperpage,$pages,$amount);
+		
         for ($p=0;$p<$pages;$p++) {
-            
-            $out .= '<table class="plugin_addressbook_print">';
+			$renderer->table_open(3,3);
+			
+			/*$renderer->tablerow_open();
+			$renderer->tableheader_open(1,1);
+			$renderer->cdata('Tableheader.');
+			$renderer->tableheader_close();
+			$renderer->tablerow_close();*/
         
             for ($row=0;$row<$entriesperpage/2;$row++) {
-                
-                unset($i);
+				
+				unset($i);
                 $i[] = ($p * $entriesperpage) + $row;
                 $i[] = ($p * $entriesperpage) + $row + ($entriesperpage/2);
                 $col = 0;
-                
-                #if ($i[0] < $amount) 
-                $out .= '<tr'.($row % 2 == 1? ' style="background:lightgray"':'').'>';
-                
-                foreach ($i as $d) {
+			
+				
+				foreach ($i as $d) {
                     # Output title
                     if ($separator != false && $list[$d]['title'] == true) {
-                        $out .= '<td style="font-weight:bold;text-decoration:underline;font-size:12px;text-align:left;background:white" colspan=4>'.$list[$d]['cfunction'].'</td>';
-                        $col++;
-                        if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
+						
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($list[$d]['cfunction']);
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						$col++;
                         } 
                     
                     # Output contact data
                     if ($d < $amount && !isset($list[$d]['title'])) {
+						
+						$renderer->tablerow_open();
 
-                        $out .= '<td style="text-align:left">'.$this->names(array($list[$d]['cfunction'],$list[$d]['surname']),' ').'</td>';
-                        $out .= '<td>'.$list[$d]['tel1'].'</td>';
-                        $out .= '<td>'.$list[$d]['tel2'].'</td>';
-                        $out .= '<td>'.$list[$d]['fax'].'</td>';
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($this->names(array($list[$d]['cfunction'],$list[$d]['surname']),' '));
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($list[$d]['tel1']);
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($list[$d]['tel2']);
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($list[$d]['fax']);
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						
+						$renderer->tablerow_close();
 
                         $col++;
-                        if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
                     }
-                    
-                    # Fill with empty cells if there are no entries, so that the table is continued
-                    if ($d> $amount) {
-                        $out.= '<td colspan=4 style="background:white;">'.str_repeat('&nbsp;',15).'</td>';
-                        $col++;
-                        if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
-                    }
-                    
                 }
-
-                $out .= '</tr>';
-            
-            }
-            
-            $out .= '</table>';
-        
-        }
-
-        return $out;
-
+			}
+			
+			$renderer->table_close();
+		}
     }
-    
     
     /* Copies the first entry of the database multiple time for testing purposes
      * Beware: This can take minutes!
