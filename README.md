@@ -22,7 +22,7 @@ Adds a search bar to perform a fulltext search
 Lists all contacts.
 
 
-  * ``[ADRESSSBOOK:index?departments]`` - Separate List by departments
+  * ``[ADRESSBOOK:index?departments]`` - Separate List by departments
 
 ![](screenshots/addnew.png)
 
