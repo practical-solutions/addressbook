@@ -862,7 +862,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
             
             $out .= '<table class="plugin_addressbook_print">';
         
-			$out .= '<tr><th>Praxis</th><th>Adresse</th><th>Telefon</th><th>Fax</th></tr>';
+			$out .= '<tr><th>Praxis</th><th>Adresse</th><th>Telefon</th></tr>';//<th>Fax</th></tr>';
             for ($row=0;$row<$entriesperpage/2;$row++) {
                 
                 unset($i);
@@ -887,7 +887,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                         $out .= '<td style="text-align:left">'.$this->names(array($list[$d]['surname'],$list[$d]['firstname'])).'</td>';
                         $out .= '<td style="text-align:left">'.$list[$d]['tel2'].', '.$list[$d]['cfunction'].'</td>';
                         $out .= '<td>'.$list[$d]['tel1'].'</td>';
-                        $out .= '<td>'.$list[$d]['fax'].'</td>';
+                        //$out .= '<td>'.$list[$d]['fax'].'</td>';
 
                         $col++;
                         if ($col < count($i)) $out .= '<td style="background:white;width:10px;"></td>';
@@ -1009,6 +1009,9 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 		$amount = 0;
 		$this->preparePrintList($list,$separator,$entriesperpage,$pages,$amount);
 		
+		$printfax = false;
+		
+		
         for ($p=0;$p<$pages;$p++) {
 			$renderer->table_open(3,3);
 			
@@ -1022,9 +1025,9 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 			$renderer->tableheader_open(1,1);
 			$renderer->cdata('Telefon');
 			$renderer->tableheader_close();
-			$renderer->tableheader_open(1,1);
+			/*$renderer->tableheader_open(1,1);
 			$renderer->cdata('Fax');
-			$renderer->tableheader_close();
+			$renderer->tableheader_close();*/
 			$renderer->tablerow_close();
 			
         
@@ -1071,11 +1074,11 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 						$renderer->p_close();
 						$renderer->tablecell_close();
 						
-						$renderer->tablecell_open();
+						/*$renderer->tablecell_open();
 						$renderer->p_open();
 						$renderer->cdata($list[$d]['fax']);
 						$renderer->p_close();
-						$renderer->tablecell_close();
+						$renderer->tablecell_close();*/
 						
 						$renderer->tablerow_close();
 
