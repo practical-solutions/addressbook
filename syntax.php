@@ -1016,11 +1016,17 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 			$renderer->table_open(3,3);
 			
 			$renderer->tablerow_open();
-			$renderer->tableheader_open(1,1);
+			$renderer->tableheader_open(2,1);
 			$renderer->cdata('Praxis');
 			$renderer->tableheader_close();
-			$renderer->tableheader_open(1,1);
+			$renderer->tableheader_open(2,1);
 			$renderer->cdata('Adresse');
+			$renderer->tableheader_close();
+			$renderer->tableheader_open(1,1);
+			$renderer->cdata('Telefon');
+			$renderer->tableheader_close();
+			$renderer->tableheader_open(1,1);
+			$renderer->cdata('Telefon');
 			$renderer->tableheader_close();
 			$renderer->tableheader_open(1,1);
 			$renderer->cdata('Telefon');
@@ -1056,15 +1062,27 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 						
 						$renderer->tablerow_open();
 
-						$renderer->tablecell_open();
+						$renderer->tablecell_open(2,1);
 						$renderer->p_open();
 						$renderer->cdata($this->names(array($list[$d]['surname'],$list[$d]['firstname']),' '));
 						$renderer->p_close();
 						$renderer->tablecell_close();
 						
-						$renderer->tablecell_open();
+						$renderer->tablecell_open(2,1);
 						$renderer->p_open();
 						$renderer->cdata($list[$d]['tel2'].', '.$list[$d]['cfunction']);
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($list[$d]['tel1']);
+						$renderer->p_close();
+						$renderer->tablecell_close();
+						
+						$renderer->tablecell_open();
+						$renderer->p_open();
+						$renderer->cdata($list[$d]['tel1']);
 						$renderer->p_close();
 						$renderer->tablecell_close();
 						
