@@ -1013,28 +1013,26 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 		
 		
         for ($p=0;$p<$pages;$p++) {
-			$renderer->table_open(3,3);
+			$renderer->table_open(2,1);
 			
+			/* //code for additional columns
 			$renderer->tablerow_open();
-			$renderer->tableheader_open(2,1);
+			$renderer->tableheader_open(4,1);
 			$renderer->cdata('Praxis');
 			$renderer->tableheader_close();
-			$renderer->tableheader_open(2,1);
-			$renderer->cdata('Adresse');
-			$renderer->tableheader_close();
 			$renderer->tableheader_open(1,1);
 			$renderer->cdata('Telefon');
 			$renderer->tableheader_close();
 			$renderer->tableheader_open(1,1);
-			$renderer->cdata('Telefon');
 			$renderer->tableheader_close();
 			$renderer->tableheader_open(1,1);
-			$renderer->cdata('Telefon');
+			$renderer->tableheader_close();
+			$renderer->tableheader_open(1,1);
 			$renderer->tableheader_close();
 			/*$renderer->tableheader_open(1,1);
 			$renderer->cdata('Fax');
 			$renderer->tableheader_close();*/
-			$renderer->tablerow_close();
+			//$renderer->tablerow_close();
 			
         
             for ($row=0;$row<$entriesperpage/2;$row++) {
@@ -1044,7 +1042,7 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                 $i[] = ($p * $entriesperpage) + $row + ($entriesperpage/2);
                 $col = 0;
 			
-				
+				$closed = true;
 				foreach ($i as $d) {
                     # Output title
                     if ($separator != false && $list[$d]['title'] == true) {
@@ -1060,37 +1058,28 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
                     # Output contact data
                     if ($d < $amount && !isset($list[$d]['title'])) {
 						
-						$renderer->tablerow_open();
+						if ($d % 2 == 0) {
+							$renderer->tablerow_open();
+							$closed = false;
+						}
 
-						$renderer->tablecell_open(2,1);
+						$renderer->tablecell_open();
 						$renderer->p_open();
 						$renderer->cdata($this->names(array($list[$d]['surname'],$list[$d]['firstname']),' '));
-						$renderer->p_close();
-						$renderer->tablecell_close();
-						
-						$renderer->tablecell_open(2,1);
-						$renderer->p_open();
+						$renderer->cdata(' - ');
 						$renderer->cdata($list[$d]['tel2'].', '.$list[$d]['cfunction']);
 						$renderer->p_close();
-						$renderer->tablecell_close();
-						
-						$renderer->tablecell_open();
 						$renderer->p_open();
 						$renderer->cdata($list[$d]['tel1']);
 						$renderer->p_close();
 						$renderer->tablecell_close();
 						
+						/* //code for additional columns
 						$renderer->tablecell_open();
 						$renderer->p_open();
 						$renderer->cdata($list[$d]['tel1']);
 						$renderer->p_close();
-						$renderer->tablecell_close();
-						
-						$renderer->tablecell_open();
-						$renderer->p_open();
-						$renderer->cdata($list[$d]['tel1']);
-						$renderer->p_close();
-						$renderer->tablecell_close();
+						$renderer->tablecell_close();*/
 						
 						/*$renderer->tablecell_open();
 						$renderer->p_open();
@@ -1098,13 +1087,28 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 						$renderer->p_close();
 						$renderer->tablecell_close();*/
 						
-						$renderer->tablerow_close();
+						/*$renderer->tablecell_open();
+						$renderer->tablecell_close();
+						$renderer->tablecell_open();
+						$renderer->tablecell_close();
+						$renderer->tablecell_open();
+						$renderer->tablecell_close();*/
+						
+						if ($d % 2 == 1) {
+							$renderer->tablerow_close();
+							$closed = true;
+						}
 
                         $col++;
                     }
                 }
 			}
 			
+			if (!$closed) {
+				$renderer->tablecell_open();
+				$renderer->tablecell_close();
+				$renderer->tablerow_close();
+			}
 			$renderer->table_close();
 		}
     }
