@@ -313,12 +313,12 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
         $out .= '<br><form enctype="multipart/form-data" action="'.wl($ID).'" method="POST">';
         $out .= '<input type="hidden" name="MAX_FILE_SIZE" value="2200000" />';
         $out .= '<input type="hidden" name="contactid" value="'.$contact_id.'" />';
-        $out .= '<input type="text" name="firstname" placeholder="'.$this->getLang('form firstname').'" value="'.$cinfo['firstname'].'">';
-        $out .= '<input type="text" name="surname" placeholder="'.$this->getLang('form surname').'" value="'.$cinfo['surname'].'"><br>';
-        $out .= '<input type="text" name="cfunction" placeholder="'.$this->getLang('form function').'" value="'.$cinfo['cfunction'].'">';
-        $out .= '<input type="text" name="department" placeholder="'.$this->getLang('form department').'" value="'.$cinfo['department'].'"><br>';
+        $out .= '<input type="text" name="department" placeholder="'.$this->getLang('form department').'" value="'.$cinfo['department'].'">';
+	    /* // das Feld firstname nutzen wir nicht: $out .= '<input type="text" name="firstname" placeholder="'.$this->getLang('form firstname').'" value="'.$cinfo['firstname'].'">';*/
+        $out .= '<input type="text" name="surname" placeholder="'.$this->getLang('form surname').'" value="'.$cinfo['surname'].'"><br/>';
+		$out .= '<input type="text" name="tel2" placeholder="'.$this->getLang('form tel2').'" value="'.$cinfo['tel2'].'">';
+        $out .= '<input type="text" name="cfunction" placeholder="'.$this->getLang('form function').'" value="'.$cinfo['cfunction'].'"><br/>';
         $out .= '<input type="text" name="tel1" placeholder="'.$this->getLang('form tel1').'" value="'.$cinfo['tel1'].'">';
-        $out .= '<input type="text" name="tel2" placeholder="'.$this->getLang('form tel2').'" value="'.$cinfo['tel2'].'"><br>';
         $out .= '<input type="text" name="fax" placeholder="'.$this->getLang('form fax').'" value="'.$cinfo['fax'].'"><br>';
         $out .= '<input type="text" name="email" placeholder="'.$this->getLang('form email').'" value="'.$cinfo['email'].'"><br>';
         $out .= '<br>'.$this->getLang('form description').':<br><textarea name="description">'.$cinfo['description'].'</textarea><br><br>';
