@@ -1063,13 +1063,18 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 							$closed = false;
 						}
 
-						$renderer->tablecell_open();
-						$renderer->p_open();
+						$renderer->tablecell_open(1,"center",1); // "center" ist hier wichtig, da die Zelle automatisch einen Paragraph öffnet, dessen Style hier nicht übergeben werden kann!
+						$renderer->strong_open();
 						$renderer->cdata($this->names(array($list[$d]['surname'],$list[$d]['firstname']),' '));
-						$renderer->cdata(' - ');
-						$renderer->cdata($list[$d]['tel2'].', '.$list[$d]['cfunction']);
+						$renderer->strong_close();
 						$renderer->p_close();
-						$renderer->p_open();
+						$renderer->p_open("Table_20_Contents");
+						$renderer->cdata($list[$d]['tel2']);
+						$renderer->p_close();
+						$renderer->p_open("Table_20_Contents");
+						$renderer->cdata($list[$d]['cfunction']);
+						$renderer->p_close();
+						$renderer->p_open("Table_20_Contents");
 						$renderer->cdata($list[$d]['tel1']);
 						$renderer->p_close();
 						$renderer->tablecell_close();
