@@ -130,6 +130,10 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 			}
 		}
 
+		# Delete a contact
+		if (isset($_REQUEST['erasecontact'])  && $this->editor){
+			$this->deleteContact($_REQUEST['erasecontact']);
+		}
 
 		/* Directly show contact card by tag
 		 * 
@@ -239,12 +243,6 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
 			$this->showCount++;
 			$out = $this->showcontact($_REQUEST['showcontact'],$ID);
 			if ($out !== false) $renderer->doc .= $out.'<br>';
-		}
-		
-		
-		# Delete a contact
-		if (isset($_REQUEST['erasecontact'])  && $this->editor){
-			$this->deleteContact($_REQUEST['erasecontact']);
 		}
 
 		return true;
