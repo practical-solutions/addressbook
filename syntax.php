@@ -36,7 +36,10 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
     
     function __construct(){
         global $INFO;
-        if ($INFO['ismanager'] === true) $this->editor = true;
+        $permissionlevel = auth_quickaclcheck($data['name']);
+        if ($permissionlevel >= AUTH_EDIT) {
+            $this->editor = true;
+        }
         if (isset($INFO['userinfo'])) $this->loggedin = true;
     }
 
