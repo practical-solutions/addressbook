@@ -36,9 +36,47 @@ class syntax_plugin_addressbook extends DokuWiki_Syntax_Plugin {
     
     function __construct(){
         global $INFO;
+        
         $permissionlevel = auth_quickaclcheck($data['name']);
-        if ($permissionlevel >= AUTH_EDIT) {
-            $this->editor = true;
+        switch ($this->getConf('use ACL permissions')) {
+            case 'no':
+                if ($INFO['ismanager'] === true) $this->editor = true;
+                break;
+            case 'AUTH_NONE':
+                if ($permissionlevel >= AUTH_NONE) {
+                    $this->editor = true;
+                }
+                break;
+            case 'AUTH_READ':
+                if ($permissionlevel >= AUTH_READ) {
+                    $this->editor = true;
+                }
+                break;
+            case 'AUTH_EDIT':
+                if ($permissionlevel >= AUTH_EDIT) {
+                    $this->editor = true;
+                }
+                break;
+            case 'AUTH_CREATE':
+                if ($permissionlevel >= AUTH_CREATE) {
+                    $this->editor = true;
+                }
+                break;
+            case 'AUTH_UPLOAD':
+                if ($permissionlevel >= AUTH_UPLOAD) {
+                    $this->editor = true;
+                }
+                break;
+            case 'AUTH_DELETE':
+                if ($permissionlevel >= AUTH_DELETE) {
+                    $this->editor = true;
+                }
+                break;
+            case 'AUTH_ADMIN':
+                if ($permissionlevel >= AUTH_ADMIN) {
+                    $this->editor = true;
+                }
+                break;  
         }
         if (isset($INFO['userinfo'])) $this->loggedin = true;
     }
