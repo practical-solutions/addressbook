@@ -54,6 +54,9 @@ Creates a printable list
 
 Contact search results are display on the search results page. In order to activate links to show or edit a contact, a page id must be stated, to which the link directs. This target page must contatin an ``[ADDRESSBOOK:]``-Tag for the request to performed.
 
+### Option 'use ACL permissions'
+
+Required access level ([ACL](https://www.dokuwiki.org/acl#background_info)) to edit the addressbook. The value 'no' uses the classic check: access via the setting of 'ismanager' in [$INFO](https://www.dokuwiki.org/devel:environment#info).
 
 ## Issues / Ideas
 
